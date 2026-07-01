@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para Você</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ivory: #faf8f5;
+      --warm-white: #f5f2ee;
+      --rose: #c8a09a;
+      --rose-dark: #9e6b64;
+      --ink: #1a1714;
+      --ink-soft: #4a4540;
+      --ink-muted: #9a948e;
+      --border: rgba(26,23,20,0.1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ivory);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+    }
+
+    .hero-date {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      opacity: 0;
+      animation: fadeUp 1s ease 0.6s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--rose-dark);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 1.5rem;
+      max-width: 420px;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.9s forwards;
+    }
+
+    .hero-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--rose);
+      margin: 2.5rem auto 0;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.1s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.5s forwards;
+    }
+
+    .scroll-hint span {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--rose), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── PHOTO GALLERY ── */
+    .gallery-section {
+      padding: 5rem 0;
+      overflow: hidden;
+    }
+
+    .gallery-header {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+    }
+
+    .gallery-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto;
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .photo-card {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      background: var(--warm-white);
+    }
+
+    .photo-card:first-child {
+      grid-column: span 2;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      aspect-ratio: inherit;
+    }
+
+    .photo-card:first-child img { aspect-ratio: 4/3; }
+    .photo-card:not(:first-child) img { aspect-ratio: 3/4; }
+    .photo-card:nth-child(3) img { aspect-ratio: 3/4; }
+    .photo-card:nth-child(4) img,
+    .photo-card:nth-child(5) img,
+    .photo-card:nth-child(6) img { aspect-ratio: 1/1; }
+
+    .photo-card:hover img { transform: scale(1.04); }
+
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,23,20,0);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.25rem;
+      transition: background 0.4s ease;
+    }
+
+    .photo-card:hover .photo-overlay {
+      background: rgba(26,23,20,0.35);
+    }
+
+    .photo-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0);
+      transition: color 0.4s ease;
+      line-height: 1.3;
+    }
+
+    .photo-card:hover .photo-caption {
+      color: rgba(255,255,255,0.92);
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(26,23,20,0.95);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      max-width: 80vw;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .lightbox-inner img {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lightbox-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -3rem;
+      right: 0;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      font-size: 1.5rem;
+      padding: 0.25rem;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .lightbox-close:hover { color: white; }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.6);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .lightbox-nav:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .lightbox-prev { right: calc(100% + 1.5rem); }
+    .lightbox-next { left: calc(100% + 1.5rem); }
+
+    /* ── LETTER SECTION ── */
+    .letter-section {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .letter-section .section-label {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .letter-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.9;
+      text-align: center;
+    }
+
+    .letter-body p + p { margin-top: 1.5rem; }
+
+    .letter-body .accent {
+      font-style: italic;
+      color: var(--rose-dark);
+    }
+
+    .letter-sign {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--ink-muted);
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    /* ── REASONS SECTION ── */
+    .reasons-section {
+      background: var(--warm-white);
+      padding: 6rem 2rem;
+    }
+
+    .reasons-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .reasons-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 3.5rem;
+    }
+
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+    }
+
+    .reason-item {
+      padding: 2rem 1.75rem;
+      background: var(--ivory);
+      transition: background 0.25s ease;
+      cursor: default;
+    }
+
+    .reason-item:hover { background: white; }
+
+    .reason-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--rose);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .reason-text {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline-section {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .timeline-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 3.5rem;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 2.5rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 0.45rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--rose);
+      transform: translateX(-3px);
+    }
+
+    .timeline-when {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-what {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--ink);
+      font-weight: 300;
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-note {
+      font-size: 0.88rem;
+      color: var(--ink-muted);
+      font-style: italic;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 4rem 2rem 5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-heart {
+      font-size: 1.2rem;
+      color: var(--rose);
+      display: block;
+      margin-bottom: 1rem;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    .footer-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.15); }
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.15); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .photo-card:first-child { grid-column: span 2; }
+      .lightbox-prev, .lightbox-next { display: none; }
+      .lightbox-inner { max-width: 94vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-date">12 de Junho</p>
+    <h1 class="hero-title">Para <em>você,</em><br>sempre.</h1>
+    <p class="hero-subtitle">Um pequeno lugar na internet que só existe porque você existe.</p>
+    <div class="hero-divider"></div>
+    <div class="scroll-hint">
+      <span>role</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- PHOTO GALLERY -->
+  <div class="gallery-section reveal">
+    <div class="gallery-header">
+      <p class="section-label">Nossos momentos</p>
+      <!-- <h2 class="gallery-title">Os que eu sempre volto a lembrar</h2> -->
+    </div>
+
+    <div class="gallery-grid" id="gallery">
+      <div class="photo-card" data-index="0">
+        <img src="./images/01.jpg" alt="(sendo obrigado a carregar sua bolsa)" loading="lazy" />
+        <div class="photo-overlay">
+          <p class="photo-caption">(sendo obrigado a carregar sua bolsa)</p>
+        </div>
+      </div>
+      <div class="photo-card" data-index="1">
+        <img src="./images/02.jpg" alt="Depois de horas na fila" loading="lazy" />
+        <div class="photo-overlay">
+          <p class="photo-caption">Depois de horas na fila</p>
+        </div>
+      </div>
+      <div class="photo-card" data-index="2">
+        <img src="./images/03.jpg" alt="praia" loading="lazy" />
+        <div class="photo-overlay">
+          <!-- <p class="photo-caption">Seu riso, meu som favorito</p> -->
+        </div>
+      </div>
+      <div class="photo-card" data-index="3">
+        <img src="./images/04.jpg" alt="Manhã tranquila" loading="lazy" />
+        <div class="photo-overlay">
+          <!-- <p class="photo-caption">Manhãs tranquilas com você</p> -->
+        </div>
+      </div>
+      <div class="photo-card" data-index="4">
+        <img src="./images/05.jpg" alt="Aventura" loading="lazy" />
+        <div class="photo-overlay">
+          <!-- <p class="photo-caption">Toda aventura, melhor com você</p> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualizador de fotos">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lb-close" aria-label="Fechar">✕</button>
+      <button class="lightbox-nav lightbox-prev" id="lb-prev" aria-label="Foto anterior">‹</button>
+      <img id="lb-img" src="" alt="" />
+      <button class="lightbox-nav lightbox-next" id="lb-next" aria-label="Próxima foto">›</button>
+      <p class="lightbox-caption" id="lb-caption"></p>
+    </div>
+  </div>
+
+  <!-- LETTER -->
+  <section class="letter-section reveal">
+    <p class="section-label">Até hoje, foram</p>
+    <div class="letter-body">
+      <p><span id="days-together"></span> dias</p>
+
+      
+    </div>
+    <p class="letter-sign">com você ♡</p>
+  </section>
+
+  <!-- REASONS
+  <section class="reasons-section">
+    <div class="reasons-inner reveal">
+      <p class="section-label">Por que te amo</p>
+      <h2 class="reasons-title">Alguns dos muitos motivos</h2>
+      <div class="reasons-grid">
+        <div class="reason-item">
+          <div class="reason-number">01</div>
+          <p class="reason-text">A forma como você ri das próprias piadas antes de terminar de contar.</p>
+        </div>
+        <div class="reason-item">
+          <div class="reason-number">02</div>
+          <p class="reason-text">Como você faz cada pessoa ao redor se sentir genuinamente vista e ouvida.</p>
+        </div>
+        <div class="reason-item">
+          <div class="reason-number">03</div>
+          <p class="reason-text">Sua curiosidade — como você se empolga com coisas que a maioria ignoraria.</p>
+        </div>
+        <div class="reason-item">
+          <div class="reason-number">04</div>
+          <p class="reason-text">A coragem silenciosa que você tem de ser exatamente quem é, todo dia.</p>
+        </div>
+        <div class="reason-item">
+          <div class="reason-number">05</div>
+          <p class="reason-text">O quanto me sinto seguro sendo completamente eu mesmo perto de você.</p>
+        </div>
+        <div class="reason-item">
+          <div class="reason-number">06</div>
+          <p class="reason-text">Que você é ao mesmo tempo meu lar e minha aventura favorita.</p>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- TIMELINE
+  <section class="timeline-section reveal">
+    <p class="section-label">Nossa história</p>
+    <h2 class="timeline-title">Como chegamos até aqui</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <p class="timeline-when">O começo</p>
+        <p class="timeline-what">O dia em que nos conhecemos</p>
+        <p class="timeline-note">Eu ainda não sabia. Mas algo mudou.</p>
+      </div>
+      <div class="timeline-item">
+        <p class="timeline-when">Logo depois</p>
+        <p class="timeline-what">Nossa primeira conversa de verdade</p>
+        <p class="timeline-note">As horas passaram. Não pareceu assim.</p>
+      </div>
+      <div class="timeline-item">
+        <p class="timeline-when">O momento</p>
+        <p class="timeline-what">Quando percebi que estava me apaixonando</p>
+        <p class="timeline-note">Você era só você. Isso foi suficiente.</p>
+      </div>
+      <div class="timeline-item">
+        <p class="timeline-when">Agora</p>
+        <p class="timeline-what">Aqui, juntos</p>
+        <p class="timeline-note">Meu lugar favorito no mundo.</p>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-heart">♡</span>
+    <p class="footer-text">Feito com amor, Hene.</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => io.observe(el));
+
+    // Lightbox
+    const photos = [
+      { src: './images/01.jpg', caption: '(sendo obrigado a carregar sua bolsa)' },
+      { src: './images/02.jpg', caption: 'Depois de horas na fila' },
+      { src: './images/03.jpg', caption: '' },
+      { src: './images/04.jpg', caption: '' },
+      { src: './images/05.jpg', caption: '' },
+    ];
+
+    const lightbox = document.getElementById('lightbox');
+    const lbImg    = document.getElementById('lb-img');
+    const lbCap    = document.getElementById('lb-caption');
+    let current    = 0;
+
+    function openLightbox(i) {
+      current = i;
+      lbImg.src = photos[i].src;
+      lbImg.alt = photos[i].caption;
+      lbCap.textContent = photos[i].caption;
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function navigate(dir) {
+      current = (current + dir + photos.length) % photos.length;
+      lbImg.src = photos[current].src;
+      lbImg.alt = photos[current].caption;
+      lbCap.textContent = photos[current].caption;
+    }
+
+    document.querySelectorAll('.photo-card').forEach(card => {
+      card.addEventListener('click', () => openLightbox(+card.dataset.index));
+    });
+
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', () => navigate(-1));
+    document.getElementById('lb-next').addEventListener('click', () => navigate(1));
+
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'ArrowRight') navigate(1);
+    });
+
+        // Contador de dias juntos
+    const startDate = new Date('2024-07-30T00:00:00');
+    const today = new Date();
+
+    const diffTime = today - startDate;
+    const daysTogether = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    document.getElementById('days-together').textContent =
+      daysTogether.toLocaleString('pt-BR');
+  </script>
+</body>
+</html>
